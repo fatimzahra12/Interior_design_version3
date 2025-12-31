@@ -74,7 +74,7 @@ class _UploadScreenState extends State<UploadScreen> {
                 children: [
                   Icon(Icons.check_circle, color: Colors.white),
                   SizedBox(width: 12),
-                  Text('Image selected successfully'),
+                  Text('Image sélectionnée avec succès'),
                 ],
               ),
               backgroundColor: accentBlue,
@@ -94,7 +94,7 @@ class _UploadScreenState extends State<UploadScreen> {
               children: [
                 const Icon(Icons.error, color: Colors.white),
                 const SizedBox(width: 12),
-                Expanded(child: Text('Error: ${e.toString()}')),
+                Expanded(child: Text('Erreur: ${e.toString()}')),
               ],
             ),
             backgroundColor: Colors.red.shade700,
@@ -118,7 +118,7 @@ class _UploadScreenState extends State<UploadScreen> {
             children: [
               Icon(Icons.warning, color: Colors.white),
               SizedBox(width: 12),
-              Text('Please select an image first'),
+              Text('Veuillez sélectionner une image d\'abord'),
             ],
           ),
           backgroundColor: Colors.orange.shade700,
@@ -176,7 +176,7 @@ class _UploadScreenState extends State<UploadScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Classification complete: ${_roomType!.toUpperCase()}'
+                      'Classification terminée: ${_roomType!.toUpperCase()}'
                     ),
                   ),
                 ],
@@ -190,7 +190,7 @@ class _UploadScreenState extends State<UploadScreen> {
           );
         }
       } else {
-        throw Exception('API Error: ${response.statusCode}');
+        throw Exception('Erreur API: ${response.statusCode}');
       }
     } catch (e) {
       if (mounted) {
@@ -200,7 +200,7 @@ class _UploadScreenState extends State<UploadScreen> {
               children: [
                 const Icon(Icons.error, color: Colors.white),
                 const SizedBox(width: 12),
-                Expanded(child: Text('Classification error: ${e.toString()}')),
+                Expanded(child: Text('Erreur de classification: ${e.toString()}')),
               ],
             ),
             backgroundColor: Colors.red.shade700,
@@ -536,100 +536,107 @@ class _UploadScreenState extends State<UploadScreen> {
             children: [
               const SizedBox(height: 10),
               
+              // Prévisualisation de l'image
               _buildImagePreview(),
               
               const SizedBox(height: 24),
               
-              Row(
-                children: [
-                  if (!kIsWeb)
-                    Expanded(
-                      child: Container(
-                        height: 56,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: accentBlue.withOpacity(0.5), width: 2),
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: _isLoading ? null : () => _pickImage(ImageSource.camera),
-                            borderRadius: BorderRadius.circular(14),
-                            child: const Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.camera_alt, color: accentBlue, size: 22),
-                                  SizedBox(width: 10),
-                                  Text(
-                                    'Camera',
-                                    style: TextStyle(
-                                      color: textLight,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
+              // Bouton "Take Photo" (caméra) - Affiché partout
+              Container(
+                height: 56,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      accentBlue.withOpacity(0.3),
+                      accentCyan.withOpacity(0.3),
+                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: accentCyan.withOpacity(0.5),
+                    width: 2,
+                  ),
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: _isLoading ? null : () => _pickImage(ImageSource.camera),
+                    borderRadius: BorderRadius.circular(14),
+                    child: const Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.camera_alt, color: accentCyan, size: 24),
+                          SizedBox(width: 12),
+                          Text(
+                            'Take Photo',
+                            style: TextStyle(
+                              color: textLight,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.5,
                             ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  
-                  if (!kIsWeb) const SizedBox(width: 16),
-                  
-                  Expanded(
-                    child: Container(
-                      height: 56,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [accentBlue, accentCyan],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: accentBlue.withOpacity(0.4),
-                            blurRadius: 12,
-                            offset: const Offset(0, 6),
                           ),
                         ],
                       ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: _isLoading ? null : () => _pickImage(ImageSource.gallery),
-                          borderRadius: BorderRadius.circular(14),
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.photo_library, color: Colors.white, size: 22),
-                                const SizedBox(width: 10),
-                                Text(
-                                  kIsWeb ? 'Choose File' : 'Gallery',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              
+              // Bouton "Choose File" (galerie)
+              Container(
+                height: 56,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [accentBlue, accentCyan],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: accentBlue.withOpacity(0.4),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: _isLoading ? null : () => _pickImage(ImageSource.gallery),
+                    borderRadius: BorderRadius.circular(14),
+                    child: const Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.photo_library, color: Colors.white, size: 22),
+                          SizedBox(width: 10),
+                          Text(
+                            'Choose File',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
               
+              // Carte de résultats
               _buildResultCard(),
               
               const SizedBox(height: 24),
               
+              // Bouton de classification
               Container(
                 height: 60,
                 decoration: BoxDecoration(
@@ -689,6 +696,7 @@ class _UploadScreenState extends State<UploadScreen> {
               
               const SizedBox(height: 32),
               
+              // Conseils
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(

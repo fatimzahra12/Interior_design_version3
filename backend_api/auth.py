@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from fastapi import Depends, HTTPException, status
+from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 import os
 
@@ -10,12 +10,10 @@ SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-in-production-2024"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-# Configuration de bcrypt avec truncate_error=False
+# Configuration de bcrypt - CORRIGÉE
 pwd_context = CryptContext(
     schemes=["bcrypt"],
-    deprecated="auto",
-    bcrypt__rounds=12,
-    bcrypt__ident="2b"
+    deprecated="auto"
 )
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
@@ -23,9 +21,12 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Vérifie un mot de passe"""
     try:
-        # Limiter à 72 caractères (limite bcrypt)
-        if len(plain_password) > 72:
-            plain_password = plain_password[:72]
+        # Limiter à 72 octets (limite bcrypt)
+        if isinstance(plain_password, str):
+            plain_password_bytes = plain_password.encode('utf-8')
+            if len(plain_password_bytes) > 72:
+                plain_password = plain_password_bytes[:72].decode('utf-8', errors='ignore')
+        
         return pwd_context.verify(plain_password, hashed_password)
     except Exception as e:
         print(f"❌ Erreur verify_password: {e}")
@@ -34,19 +35,27 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def get_password_hash(password: str) -> str:
     """Hash un mot de passe"""
     try:
-        # Limiter à 72 caractères (limite bcrypt)
-        if len(password) > 72:
-            password = password[:72]
-        # S'assurer que le mot de passe est une string
+        # S'assurer que c'est une string
         password = str(password)
+        
+        # Limiter à 72 octets (limite bcrypt)
+        password_bytes = password.encode('utf-8')
+        if len(password_bytes) > 72:
+            # Tronquer proprement en évitant de couper un caractère UTF-8
+            password = password_bytes[:72].decode('utf-8', errors='ignore')
+            print(f"⚠️  Mot de passe tronqué à 72 octets")
+        
         hashed = pwd_context.hash(password)
         print(f"✅ Mot de passe hashé avec succès")
         return hashed
     except Exception as e:
         print(f"❌ Erreur get_password_hash: {e}")
-        raise
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erreur lors du hachage du mot de passe: {str(e)}"
+        )
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """Crée un token JWT"""
     try:
         to_encode = data.copy()
@@ -59,21 +68,34 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
         return encoded_jwt
     except Exception as e:
         print(f"❌ Erreur create_access_token: {e}")
-        raise
+        raise HTTPException(
+            status_code=500,
+            detail="Erreur lors de la création du token"
+        )
 
 def verify_token(token: str) -> str:
-    """Vérifie un token JWT"""
+    """Vérifie un token JWT et retourne l'email"""
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
+        email = payload.get("sub")
+        
         if email is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid authentication credentials"
             )
-        return email
+        
+        # S'assurer que email est une string
+        return str(email)
+        
     except JWTError as e:
         print(f"❌ Erreur verify_token: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials"
+        )
+    except Exception as e:
+        print(f"❌ Erreur inattendue verify_token: {e}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authentication credentials"

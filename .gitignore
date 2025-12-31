@@ -5,11 +5,9 @@
 *.swp
 .DS_Store
 .atom/
-.build/
 .buildlog/
 .history
 .svn/
-.swiftpm/
 migrate_working_dir/
 
 # IntelliJ related
@@ -27,11 +25,12 @@ migrate_working_dir/
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
+.flutter-plugins
 .flutter-plugins-dependencies
+.packages
 .pub-cache/
 .pub/
 /build/
-/coverage/
 
 # Symbolication related
 app.*.symbols
@@ -44,8 +43,38 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-*.dll
-*.pyd
+# Python virtual environment
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
 
-echo "venv/" >> .gitignore
-echo "*/venv/" >> .gitignore
+# Backend API specific
+backend_api/*.db
+backend_api/*.sqlite
+backend_api/*.sqlite3
+backend_api/interior_design.db
+backend_api/.env
+
+# Model files (too large for git)
+backend_api/models/*.h5
+backend_api/models/*.pkl
+backend_api/models/*.pth
+backend_api/models/*.onnx
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
