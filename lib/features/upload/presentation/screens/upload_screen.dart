@@ -8,7 +8,7 @@ import 'dart:convert';
 import '../../../../core/theme/app_theme.dart';
 
 class UploadScreen extends StatefulWidget {
-  const UploadScreen({Key? key}) : super(key: key);
+  const UploadScreen({super.key});
 
   @override
   State<UploadScreen> createState() => _UploadScreenState();

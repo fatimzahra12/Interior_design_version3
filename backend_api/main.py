@@ -9,6 +9,7 @@ import numpy as np
 import io
 import os
 import models, schemas, crud, auth, database
+from routers import profile
 
 # Créer les tables
 models.Base.metadata.create_all(bind=database.engine)
@@ -18,7 +19,7 @@ app = FastAPI(
     description="API complète pour classification et transformation de pièces",
     version="1.0.0"
 )
-
+app.include_router(profile.router)
 # Configuration CORS pour Flutter
 app.add_middleware(
     CORSMiddleware,
