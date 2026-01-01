@@ -5,6 +5,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../../../../core/theme/app_theme.dart';
 
 class UploadScreen extends StatefulWidget {
   const UploadScreen({Key? key}) : super(key: key);
@@ -20,22 +21,14 @@ class _UploadScreenState extends State<UploadScreen> {
   final ImagePicker _picker = ImagePicker();
   bool _isLoading = false;
   
-  // Résultats de classification
+  // Classification results
   String? _roomType;
   double? _confidence;
 
-  // URL de l'API
+  // API URL
   static const String baseUrl = kIsWeb 
       ? 'http://localhost:8000'
       : 'http://10.0.2.2:8000';
-
-  // Couleurs du thème
-  static const Color primaryDark = Color(0xFF0A1128);
-  static const Color secondaryDark = Color(0xFF1A2332);
-  static const Color accentBlue = Color(0xFF2E5EFF);
-  static const Color accentCyan = Color(0xFF00D9FF);
-  static const Color textLight = Color(0xFFE8EAF6);
-  static const Color cardDark = Color(0xFF1E2A3A);
 
   Future<void> _pickImage(ImageSource source) async {
     try {
@@ -70,17 +63,17 @@ class _UploadScreenState extends State<UploadScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Row(
+              content: Row(
                 children: [
-                  Icon(Icons.check_circle, color: Colors.white),
-                  SizedBox(width: 12),
-                  Text('Image sélectionnée avec succès'),
+                  Icon(Icons.check_circle, color: AppTheme.accentCream),
+                  const SizedBox(width: 12),
+                  const Text('Image selected successfully'),
                 ],
               ),
-              backgroundColor: accentBlue,
+              backgroundColor: AppTheme.accentGold.withOpacity(0.9),
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
               ),
             ),
           );
@@ -92,15 +85,15 @@ class _UploadScreenState extends State<UploadScreen> {
           SnackBar(
             content: Row(
               children: [
-                const Icon(Icons.error, color: Colors.white),
+                Icon(Icons.error, color: AppTheme.accentCream),
                 const SizedBox(width: 12),
-                Expanded(child: Text('Erreur: ${e.toString()}')),
+                Expanded(child: Text('Error: ${e.toString()}')),
               ],
             ),
-            backgroundColor: Colors.red.shade700,
+            backgroundColor: AppTheme.errorRed.withOpacity(0.9),
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
             ),
           ),
         );
@@ -114,17 +107,17 @@ class _UploadScreenState extends State<UploadScreen> {
     if (_imageFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Row(
+          content: Row(
             children: [
-              Icon(Icons.warning, color: Colors.white),
-              SizedBox(width: 12),
-              Text('Veuillez sélectionner une image d\'abord'),
+              Icon(Icons.warning, color: AppTheme.accentCream),
+              const SizedBox(width: 12),
+              const Text('Please select an image first'),
             ],
           ),
           backgroundColor: Colors.orange.shade700,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
           ),
         ),
       );
@@ -172,25 +165,25 @@ class _UploadScreenState extends State<UploadScreen> {
             SnackBar(
               content: Row(
                 children: [
-                  const Icon(Icons.check_circle, color: Colors.white),
+                  Icon(Icons.check_circle, color: AppTheme.accentCream),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Classification terminée: ${_roomType!.toUpperCase()}'
+                      'Classification completed: ${_roomType!.toUpperCase()}'
                     ),
                   ),
                 ],
               ),
-              backgroundColor: accentBlue,
+              backgroundColor: AppTheme.successGreen.withOpacity(0.9),
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
               ),
             ),
           );
         }
       } else {
-        throw Exception('Erreur API: ${response.statusCode}');
+        throw Exception('API Error: ${response.statusCode}');
       }
     } catch (e) {
       if (mounted) {
@@ -198,15 +191,15 @@ class _UploadScreenState extends State<UploadScreen> {
           SnackBar(
             content: Row(
               children: [
-                const Icon(Icons.error, color: Colors.white),
+                Icon(Icons.error, color: AppTheme.accentCream),
                 const SizedBox(width: 12),
-                Expanded(child: Text('Erreur de classification: ${e.toString()}')),
+                Expanded(child: Text('Classification error: ${e.toString()}')),
               ],
             ),
-            backgroundColor: Colors.red.shade700,
+            backgroundColor: AppTheme.errorRed.withOpacity(0.9),
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
             ),
           ),
         );
@@ -225,13 +218,14 @@ class _UploadScreenState extends State<UploadScreen> {
       return Container(
         height: 320,
         decoration: BoxDecoration(
-          color: cardDark,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: accentBlue.withOpacity(0.3), width: 2),
+          color: AppTheme.secondaryDark.withOpacity(0.8),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: AppTheme.accentGold.withOpacity(0.3), width: 2),
+          boxShadow: AppTheme.glowShadow(),
         ),
         child: Center(
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation(accentCyan),
+            valueColor: AlwaysStoppedAnimation(AppTheme.accentGold),
             strokeWidth: 3,
           ),
         ),
@@ -242,19 +236,13 @@ class _UploadScreenState extends State<UploadScreen> {
       return Container(
         height: 320,
         decoration: BoxDecoration(
-          color: cardDark,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: accentBlue.withOpacity(0.3), width: 2),
-          boxShadow: [
-            BoxShadow(
-              color: accentBlue.withOpacity(0.2),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
+          color: AppTheme.secondaryDark.withOpacity(0.8),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: AppTheme.accentGold.withOpacity(0.3), width: 2),
+          boxShadow: AppTheme.glowShadow(),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(20),
           child: Image.memory(
             _webImage!,
             fit: BoxFit.cover,
@@ -266,19 +254,13 @@ class _UploadScreenState extends State<UploadScreen> {
       return Container(
         height: 320,
         decoration: BoxDecoration(
-          color: cardDark,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: accentBlue.withOpacity(0.3), width: 2),
-          boxShadow: [
-            BoxShadow(
-              color: accentBlue.withOpacity(0.2),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
+          color: AppTheme.secondaryDark.withOpacity(0.8),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: AppTheme.accentGold.withOpacity(0.3), width: 2),
+          boxShadow: AppTheme.glowShadow(),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(20),
           child: Image.file(
             _imageFile as File,
             fit: BoxFit.cover,
@@ -291,12 +273,19 @@ class _UploadScreenState extends State<UploadScreen> {
     return Container(
       height: 320,
       decoration: BoxDecoration(
-        color: cardDark,
-        borderRadius: BorderRadius.circular(20),
+        color: AppTheme.secondaryDark.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: accentBlue.withOpacity(0.3),
+          color: AppTheme.accentGold.withOpacity(0.3),
           width: 2,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Center(
         child: Column(
@@ -305,30 +294,33 @@ class _UploadScreenState extends State<UploadScreen> {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: accentBlue.withOpacity(0.1),
+                gradient: AppTheme.primaryGradient,
                 shape: BoxShape.circle,
+                boxShadow: AppTheme.glowShadow(),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.add_photo_alternate_outlined,
                 size: 64,
-                color: accentCyan,
+                color: Colors.white,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             Text(
               'No Image Selected',
               style: TextStyle(
-                color: textLight.withOpacity(0.6),
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
+                color: AppTheme.textLight.withOpacity(0.9),
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                fontFamily: 'PlayfairDisplay',
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Text(
               'Upload a room photo to classify',
               style: TextStyle(
-                color: textLight.withOpacity(0.4),
-                fontSize: 14,
+                color: AppTheme.textMuted,
+                fontSize: 16,
+                fontFamily: 'Inter',
               ),
             ),
           ],
@@ -351,22 +343,22 @@ class _UploadScreenState extends State<UploadScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            accentBlue.withOpacity(0.2),
-            accentCyan.withOpacity(0.1),
+            AppTheme.accentGold.withOpacity(0.2),
+            AppTheme.accentWarm.withOpacity(0.1),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: isHighConfidence ? accentCyan : accentBlue,
+          color: isHighConfidence ? AppTheme.accentGold : AppTheme.accentWarm,
           width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: (isHighConfidence ? accentCyan : accentBlue).withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            color: (isHighConfidence ? AppTheme.accentGold : AppTheme.accentWarm).withOpacity(0.3),
+            blurRadius: 25,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -378,19 +370,9 @@ class _UploadScreenState extends State<UploadScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [accentBlue, accentCyan],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: accentBlue.withOpacity(0.5),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+                  gradient: AppTheme.primaryGradient,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: AppTheme.glowShadow(),
                 ),
                 child: const Icon(
                   Icons.meeting_room_rounded,
@@ -398,7 +380,7 @@ class _UploadScreenState extends State<UploadScreen> {
                   size: 32,
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 20),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -407,18 +389,20 @@ class _UploadScreenState extends State<UploadScreen> {
                       'Classification Result',
                       style: TextStyle(
                         fontSize: 14,
-                        color: textLight.withOpacity(0.7),
+                        color: AppTheme.textLight.withOpacity(0.8),
                         fontWeight: FontWeight.w500,
+                        fontFamily: 'Inter',
                         letterSpacing: 0.5,
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 8),
                     Text(
                       _roomType!.toUpperCase(),
-                      style: const TextStyle(
-                        fontSize: 26,
+                      style: TextStyle(
+                        fontSize: 28,
                         fontWeight: FontWeight.w800,
-                        color: textLight,
+                        color: AppTheme.textLight,
+                        fontFamily: 'PlayfairDisplay',
                         letterSpacing: 1,
                       ),
                     ),
@@ -427,31 +411,33 @@ class _UploadScreenState extends State<UploadScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
           Container(
-            padding: const EdgeInsets.all(18),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: cardDark.withOpacity(0.6),
-              borderRadius: BorderRadius.circular(16),
+              color: AppTheme.secondaryDark.withOpacity(0.6),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: (isHighConfidence ? accentCyan : accentBlue).withOpacity(0.3),
+                color: (isHighConfidence ? AppTheme.accentGold : AppTheme.accentWarm).withOpacity(0.3),
               ),
             ),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: isHighConfidence ? accentCyan.withOpacity(0.2) : accentBlue.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
+                    color: isHighConfidence 
+                        ? AppTheme.accentGold.withOpacity(0.2) 
+                        : AppTheme.accentWarm.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(
                     isHighConfidence ? Icons.verified : Icons.info_outline,
-                    color: isHighConfidence ? accentCyan : accentBlue,
-                    size: 24,
+                    color: isHighConfidence ? AppTheme.accentGold : AppTheme.accentWarm,
+                    size: 28,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 20),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -459,38 +445,48 @@ class _UploadScreenState extends State<UploadScreen> {
                       Text(
                         'Confidence Level',
                         style: TextStyle(
-                          fontSize: 13,
-                          color: textLight.withOpacity(0.6),
+                          fontSize: 14,
+                          color: AppTheme.textLight.withOpacity(0.7),
                           fontWeight: FontWeight.w500,
+                          fontFamily: 'Inter',
                         ),
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 8),
                       Row(
                         children: [
                           Text(
                             '$confidencePercent%',
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: 28,
                               fontWeight: FontWeight.w800,
-                              color: isHighConfidence ? accentCyan : accentBlue,
+                              color: isHighConfidence ? AppTheme.accentGold : AppTheme.accentWarm,
+                              fontFamily: 'PlayfairDisplay',
                             ),
                           ),
-                          const SizedBox(width: 10),
+                          const SizedBox(width: 16),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4,
+                              horizontal: 12,
+                              vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: (isHighConfidence ? accentCyan : accentBlue).withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(8),
+                              color: (isHighConfidence 
+                                  ? AppTheme.accentGold 
+                                  : AppTheme.accentWarm).withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: (isHighConfidence 
+                                    ? AppTheme.accentGold 
+                                    : AppTheme.accentWarm).withOpacity(0.5),
+                              ),
                             ),
                             child: Text(
                               isHighConfidence ? 'HIGH' : 'MEDIUM',
                               style: TextStyle(
-                                fontSize: 11,
+                                fontSize: 12,
                                 fontWeight: FontWeight.w700,
-                                color: isHighConfidence ? accentCyan : accentBlue,
+                                color: isHighConfidence ? AppTheme.accentGold : AppTheme.accentWarm,
+                                fontFamily: 'Inter',
                                 letterSpacing: 1,
                               ),
                             ),
@@ -511,179 +507,245 @@ class _UploadScreenState extends State<UploadScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: primaryDark,
+      backgroundColor: AppTheme.primaryDark,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: secondaryDark,
+        backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Room Classification',
           style: TextStyle(
-            color: textLight,
+            color: AppTheme.accentCream,
             fontWeight: FontWeight.w700,
-            fontSize: 20,
+            fontSize: 22,
+            fontFamily: 'PlayfairDisplay',
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: textLight),
+          icon: Icon(Icons.arrow_back, color: AppTheme.accentCream),
           onPressed: () => Navigator.pop(context),
         ),
+        centerTitle: true,
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 10),
-              
-              // Prévisualisation de l'image
-              _buildImagePreview(),
-              
-              const SizedBox(height: 24),
-              
-              // Bouton "Take Photo" (caméra) - Affiché partout
-              Container(
-                height: 56,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      accentBlue.withOpacity(0.3),
-                      accentCyan.withOpacity(0.3),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [AppTheme.primaryDark, AppTheme.secondaryDark],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 80),
+                
+                // Header Section
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: AppTheme.secondaryDark.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: AppTheme.accentGold.withOpacity(0.2),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Upload Room Image',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w800,
+                          color: AppTheme.accentCream,
+                          fontFamily: 'PlayfairDisplay',
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Upload a photo of any room and our AI will classify it',
+                        style: TextStyle(
+                          color: AppTheme.textMuted,
+                          fontSize: 16,
+                          fontFamily: 'Inter',
+                          height: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        height: 3,
+                        width: 80,
+                        decoration: BoxDecoration(
+                          gradient: AppTheme.primaryGradient,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
                     ],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: accentCyan.withOpacity(0.5),
-                    width: 2,
                   ),
                 ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: _isLoading ? null : () => _pickImage(ImageSource.camera),
-                    borderRadius: BorderRadius.circular(14),
-                    child: const Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.camera_alt, color: accentCyan, size: 24),
-                          SizedBox(width: 12),
-                          Text(
-                            'Take Photo',
-                            style: TextStyle(
-                              color: textLight,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.5,
-                            ),
+                
+                const SizedBox(height: 32),
+                
+                // Image Preview
+                _buildImagePreview(),
+                
+                const SizedBox(height: 32),
+                
+                // Camera Button
+                MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: Container(
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: AppTheme.secondaryDark.withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(
+                        color: AppTheme.accentGold.withOpacity(0.3),
+                        width: 2,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 15,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: _isLoading ? null : () => _pickImage(ImageSource.camera),
+                        borderRadius: BorderRadius.circular(16),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.camera_alt_rounded,
+                                color: AppTheme.accentGold,
+                                size: 24,
+                              ),
+                              const SizedBox(width: 16),
+                              Text(
+                                'Take Photo',
+                                style: TextStyle(
+                                  color: AppTheme.textLight,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Inter',
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              
-              // Bouton "Choose File" (galerie)
-              Container(
-                height: 56,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [accentBlue, accentCyan],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: accentBlue.withOpacity(0.4),
-                      blurRadius: 12,
-                      offset: const Offset(0, 6),
+                
+                const SizedBox(height: 16),
+                
+                // Gallery Button
+                MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: Container(
+                    height: 60,
+                    decoration: BoxDecoration(
+                      gradient: AppTheme.primaryGradient,
+                      borderRadius: BorderRadius.circular(18),
+                      boxShadow: AppTheme.glowShadow(),
                     ),
-                  ],
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: _isLoading ? null : () => _pickImage(ImageSource.gallery),
-                    borderRadius: BorderRadius.circular(14),
-                    child: const Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.photo_library, color: Colors.white, size: 22),
-                          SizedBox(width: 10),
-                          Text(
-                            'Choose File',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                            ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: _isLoading ? null : () => _pickImage(ImageSource.gallery),
+                        borderRadius: BorderRadius.circular(16),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.photo_library_rounded,
+                                color: Colors.white,
+                                size: 24,
+                              ),
+                              const SizedBox(width: 16),
+                              Text(
+                                'Choose from Gallery',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: 'Inter',
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              
-              // Carte de résultats
-              _buildResultCard(),
-              
-              const SizedBox(height: 24),
-              
-              // Bouton de classification
-              Container(
-                height: 60,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: (_imageFile == null || _isLoading)
-                        ? [cardDark, cardDark]
-                        : [accentBlue, accentCyan],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: (_imageFile != null && !_isLoading)
-                      ? [
-                          BoxShadow(
-                            color: accentBlue.withOpacity(0.5),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
-                          ),
-                        ]
-                      : [],
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: (_isLoading || _imageFile == null) ? null : _classifyRoom,
-                    borderRadius: BorderRadius.circular(14),
-                    child: Center(
+                
+                // Result Card
+                _buildResultCard(),
+                
+                const SizedBox(height: 32),
+                
+                // Classify Button
+                MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: Container(
+                    height: 64,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: (_imageFile != null && !_isLoading)
+                          ? AppTheme.glowShadow()
+                          : null,
+                    ),
+                    child: ElevatedButton(
+                      onPressed: (_isLoading || _imageFile == null) 
+                          ? null 
+                          : _classifyRoom,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: (_imageFile == null || _isLoading)
+                            ? AppTheme.secondaryDark
+                            : AppTheme.accentGold,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                      ),
                       child: _isLoading
                           ? const SizedBox(
-                              height: 24,
-                              width: 24,
+                              height: 28,
+                              width: 28,
                               child: CircularProgressIndicator(
                                 strokeWidth: 3,
                                 valueColor: AlwaysStoppedAnimation(Colors.white),
                               ),
                             )
-                          : const Row(
+                          : Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.psychology, color: Colors.white, size: 24),
-                                SizedBox(width: 12),
+                                Icon(
+                                  Icons.psychology_rounded,
+                                  color: Colors.white,
+                                  size: 28,
+                                ),
+                                const SizedBox(width: 16),
                                 Text(
                                   'Classify Room with AI',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
+                                    fontFamily: 'Inter',
                                     letterSpacing: 0.5,
                                   ),
                                 ),
@@ -692,57 +754,61 @@ class _UploadScreenState extends State<UploadScreen> {
                     ),
                   ),
                 ),
-              ),
-              
-              const SizedBox(height: 32),
-              
-              // Conseils
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: cardDark,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: accentBlue.withOpacity(0.2)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [accentBlue, accentCyan],
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Icon(
-                            Icons.tips_and_updates,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        const Text(
-                          'Tips for Best Results',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: textLight,
-                          ),
-                        ),
-                      ],
+                
+                const SizedBox(height: 40),
+                
+                // Tips Section
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: AppTheme.secondaryDark.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: AppTheme.accentGold.withOpacity(0.2),
                     ),
-                    const SizedBox(height: 18),
-                    _buildTipItem(Icons.wb_sunny, 'Take photos in good lighting'),
-                    _buildTipItem(Icons.crop_free, 'Capture the entire room clearly'),
-                    _buildTipItem(Icons.door_front_door, 'Include doors and windows'),
-                    _buildTipItem(Icons.weekend, 'Keep furniture visible but not cluttered'),
-                  ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              gradient: AppTheme.primaryGradient,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: AppTheme.glowShadow(),
+                            ),
+                            child: const Icon(
+                              Icons.tips_and_updates_rounded,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Text(
+                            'Tips for Best Results',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.accentCream,
+                              fontFamily: 'PlayfairDisplay',
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      _buildTipItem(Icons.wb_sunny_outlined, 'Take photos in good lighting'),
+                      _buildTipItem(Icons.crop_free_rounded, 'Capture the entire room clearly'),
+                      _buildTipItem(Icons.door_front_door_outlined, 'Include doors and windows'),
+                      _buildTipItem(Icons.weekend_outlined, 'Keep furniture visible but not cluttered'),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                
+                const SizedBox(height: 60),
+              ],
+            ),
           ),
         ),
       ),
@@ -751,22 +817,33 @@ class _UploadScreenState extends State<UploadScreen> {
 
   Widget _buildTipItem(IconData icon, String text) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.only(bottom: 18),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 20,
-            color: accentCyan,
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppTheme.accentGold.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: AppTheme.accentGold.withOpacity(0.3),
+              ),
+            ),
+            child: Icon(
+              icon,
+              size: 22,
+              color: AppTheme.accentGold,
+            ),
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: 18),
           Expanded(
             child: Text(
               text,
               style: TextStyle(
-                color: textLight.withOpacity(0.8),
-                fontSize: 14,
+                color: AppTheme.textLight.withOpacity(0.9),
+                fontSize: 16,
                 fontWeight: FontWeight.w500,
+                fontFamily: 'Inter',
               ),
             ),
           ),

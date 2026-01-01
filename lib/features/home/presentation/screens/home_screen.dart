@@ -14,187 +14,339 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppTheme.primaryDark,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: AppTheme.secondaryDark,
-        title: const Text('AI Interior Design'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          'AI Interior Design',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+            color: AppTheme.accentCream,
+            fontFamily: 'PlayfairDisplay',
+          ),
+        ),
+        centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await ref.read(authStateProvider.notifier).logout();
-              if (context.mounted) {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  (route) => false,
-                );
-              }
-            },
-            tooltip: 'Logout',
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: AppTheme.accentGold.withOpacity(0.3),
+                width: 1.5,
+              ),
+            ),
+            child: IconButton(
+              icon: Icon(
+                Icons.logout_rounded,
+                color: AppTheme.accentCream,
+                size: 22,
+              ),
+              onPressed: () async {
+                await ref.read(authStateProvider.notifier).logout();
+                if (context.mounted) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    (route) => false,
+                  );
+                }
+              },
+              tooltip: 'Logout',
+            ),
           ),
         ],
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              
-              // Welcome Section
-              Text(
-                'Welcome back,',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: AppTheme.textLight.withOpacity(0.7),
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Designer!',
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w800,
-                  color: AppTheme.textLight,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Transform any room with AI-powered interior design.',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: AppTheme.textLight.withOpacity(0.6),
-                ),
-              ),
-              
-              const SizedBox(height: 32),
-              
-              // Start Generating Card
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const UploadScreen(),
-                    ),
-                  );
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(28),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [AppTheme.primaryDark, AppTheme.secondaryDark],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 80),
+                
+                // Welcome Section
+                Container(
+                  padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    gradient: AppTheme.primaryGradient,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: AppTheme.glowShadow(),
+                    color: AppTheme.secondaryDark.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: AppTheme.accentGold.withOpacity(0.2),
+                    ),
                   ),
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(
+                        'Welcome back,',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: AppTheme.textMuted,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Inter',
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Designer!',
+                        style: TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.w800,
+                          color: AppTheme.accentCream,
+                          fontFamily: 'PlayfairDisplay',
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Transform any room with AI-powered interior design.',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: AppTheme.textMuted,
+                          fontFamily: 'Inter',
+                          height: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
                       Container(
-                        padding: const EdgeInsets.all(16),
+                        height: 3,
+                        width: 60,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          shape: BoxShape.circle,
+                          gradient: AppTheme.primaryGradient,
+                          borderRadius: BorderRadius.circular(2),
                         ),
-                        child: const Icon(
-                          Icons.auto_awesome,
-                          color: Colors.white,
-                          size: 32,
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      const Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Start Generating',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 22,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            SizedBox(height: 6),
-                            Text(
-                              'Create your dream room in 3 steps',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.white,
-                        size: 20,
                       ),
                     ],
                   ),
                 ),
-              ),
-              
-              const SizedBox(height: 40),
-              
-              // Design Inspirations Section
-              const Text(
-                'Design Inspirations',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: AppTheme.textLight,
+                
+                const SizedBox(height: 32),
+                
+                // Start Generating Card
+                MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const UploadScreen(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(28),
+                      decoration: BoxDecoration(
+                        gradient: AppTheme.primaryGradient,
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.accentGold.withOpacity(0.4),
+                            blurRadius: 30,
+                            spreadRadius: 1,
+                            offset: const Offset(0, 12),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(18),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.3),
+                                width: 2,
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.auto_awesome_rounded,
+                              color: Colors.white,
+                              size: 32,
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Start Generating',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: 'PlayfairDisplay',
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Create your dream room in 3 simple steps',
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.9),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'Inter',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Examples of AI-generated designs',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppTheme.textLight.withOpacity(0.6),
+                
+                const SizedBox(height: 48),
+                
+                // Design Inspirations Section
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: AppTheme.secondaryDark.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: AppTheme.accentGold.withOpacity(0.2),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Design Inspirations',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
+                          color: AppTheme.accentCream,
+                          fontFamily: 'PlayfairDisplay',
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Examples of AI-generated designs',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppTheme.textMuted,
+                          fontFamily: 'Inter',
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        height: 3,
+                        width: 60,
+                        decoration: BoxDecoration(
+                          gradient: AppTheme.primaryGradient,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              
-              const SizedBox(height: 20),
-              
-              // Design Cards Grid
-              GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 0.85,
-                children: [
-                  _buildDesignCard(
-                    context,
-                    'Minimalist Living Room',
-                    'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=400',
-                    Icons.weekend,
+                
+                const SizedBox(height: 24),
+                
+                // Design Cards Grid
+                GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 20,
+                  childAspectRatio: 0.85,
+                  children: [
+                    _buildDesignCard(
+                      context,
+                      'Minimalist Living Room',
+                      'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=400',
+                      Icons.weekend_outlined,
+                    ),
+                    _buildDesignCard(
+                      context,
+                      'Cozy Bedroom',
+                      'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=400',
+                      Icons.bed_outlined,
+                    ),
+                    _buildDesignCard(
+                      context,
+                      'Modern Kitchen',
+                      'https://images.unsplash.com/photo-1556912173-3bb406ef7e77?w=400',
+                      Icons.kitchen_outlined,
+                    ),
+                    _buildDesignCard(
+                      context,
+                      'Industrial Loft',
+                      'https://images.unsplash.com/photo-1631889993959-41b4e9c6e3c5?w=400',
+                      Icons.home_outlined,
+                    ),
+                  ],
+                ),
+                
+                const SizedBox(height: 40),
+                
+                // Stats Section
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppTheme.accentWarm.withOpacity(0.2),
+                        AppTheme.secondaryDark.withOpacity(0.4),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: AppTheme.accentGold.withOpacity(0.2),
+                    ),
                   ),
-                  _buildDesignCard(
-                    context,
-                    'Cozy Bedroom',
-                    'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=400',
-                    Icons.bed,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildStatItem('5K+', 'Designs Created', Icons.auto_awesome),
+                      Container(
+                        height: 40,
+                        width: 1,
+                        color: AppTheme.accentGold.withOpacity(0.3),
+                      ),
+                      _buildStatItem('95%', 'User Satisfaction', Icons.thumb_up),
+                      Container(
+                        height: 40,
+                        width: 1,
+                        color: AppTheme.accentGold.withOpacity(0.3),
+                      ),
+                      _buildStatItem('24/7', 'AI Active', Icons.schedule),
+                    ],
                   ),
-                  _buildDesignCard(
-                    context,
-                    'Modern Kitchen',
-                    'https://images.unsplash.com/photo-1556912173-3bb406ef7e77?w=400',
-                    Icons.kitchen,
-                  ),
-                  _buildDesignCard(
-                    context,
-                    'Industrial Loft',
-                    'https://images.unsplash.com/photo-1631889993959-41b4e9c6e3c5?w=400',
-                    Icons.house,
-                  ),
-                ],
-              ),
-            ],
+                ),
+                
+                const SizedBox(height: 60),
+              ],
+            ),
           ),
         ),
       ),
@@ -207,94 +359,216 @@ class HomeScreen extends ConsumerWidget {
     String imageUrl,
     IconData icon,
   ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppTheme.cardDark,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppTheme.accentBlue.withOpacity(0.2),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.accentBlue.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppTheme.secondaryDark,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: AppTheme.accentGold.withOpacity(0.2),
+            width: 1.5,
           ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: AppTheme.cardDark,
-                        child: Center(
-                          child: Icon(
-                            icon,
-                            size: 48,
-                            color: AppTheme.accentBlue.withOpacity(0.5),
-                          ),
-                        ),
-                      );
-                    },
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Container(
-                        color: AppTheme.cardDark,
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                                : null,
-                            valueColor: const AlwaysStoppedAnimation(
-                              AppTheme.accentCyan,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black.withOpacity(0.7),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.textLight,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Image Section
+              Expanded(
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                AppTheme.secondaryDark,
+                                AppTheme.primaryDark,
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                          ),
+                          child: Center(
+                            child: Icon(
+                              icon,
+                              size: 48,
+                              color: AppTheme.accentGold.withOpacity(0.5),
+                            ),
+                          ),
+                        );
+                      },
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                AppTheme.secondaryDark,
+                                AppTheme.primaryDark,
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                          ),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
+                              valueColor:
+                                  const AlwaysStoppedAnimation(AppTheme.accentGold),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    // Gradient overlay
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withOpacity(0.8),
+                          ],
+                        ),
+                      ),
+                    ),
+                    
+                    // Style Tag
+                    Positioned(
+                      top: 16,
+                      left: 16,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.accentGold.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          'AI Generated',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Inter',
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              // Title Section
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.black.withOpacity(0.7),
+                      Colors.black.withOpacity(0.9),
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      icon,
+                      color: AppTheme.accentCream,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.accentCream,
+                          fontFamily: 'Inter',
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
+    );
+  }
+
+  Widget _buildStatItem(String value, String label, IconData icon) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppTheme.accentGold.withOpacity(0.1),
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: AppTheme.accentGold.withOpacity(0.3),
+              width: 1.5,
+            ),
+          ),
+          child: Icon(
+            icon,
+            color: AppTheme.accentGold,
+            size: 24,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w800,
+            color: AppTheme.accentCream,
+            fontFamily: 'PlayfairDisplay',
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: AppTheme.textMuted,
+            fontFamily: 'Inter',
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 }

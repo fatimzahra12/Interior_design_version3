@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../widgets/style_card.dart';
 import '../providers/style_providers.dart';
+import '../../../../core/theme/app_theme.dart';
 
 class StyleSelectionScreen extends ConsumerStatefulWidget {
   const StyleSelectionScreen({super.key});
@@ -59,117 +60,195 @@ class _StyleSelectionScreenState extends ConsumerState<StyleSelectionScreen> {
     final selectedStyle = ref.watch(selectedStyleProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: AppTheme.primaryDark,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: const Text(
           'Choose Your Style',
           style: TextStyle(
-            color: Color(0xFF333333),
+            color: AppTheme.accentCream,
             fontWeight: FontWeight.w700,
+            fontSize: 22,
+            fontFamily: 'PlayfairDisplay',
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF333333)),
+          icon: Icon(Icons.arrow_back, color: AppTheme.accentCream),
           onPressed: () => Navigator.pop(context),
         ),
+        centerTitle: true,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Instruction Text
-                  Text(
-                    'Select an interior design style',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF333333),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Your AI will transform your room based on this style',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-
-                  // Grid of Style Cards
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: 0.75, // Adjust for card proportions
-                    ),
-                    itemCount: styles.length,
-                    itemBuilder: (context, index) {
-                      final style = styles[index];
-                      return StyleCard(
-                        title: style['title']!,
-                        description: style['description']!,
-                        imageUrl: style['image']!,
-                        isSelected: selectedStyle == style['title'],
-                        onTap: () {
-                          ref.read(selectedStyleProvider.notifier).setStyle(
-                              style['title']);
-                        },
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
+      extendBodyBehindAppBar: true,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [AppTheme.primaryDark, AppTheme.secondaryDark],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 80),
+                    
+                    // Header Section
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: AppTheme.secondaryDark.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: AppTheme.accentGold.withOpacity(0.2),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Select an interior design style',
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w800,
+                              color: AppTheme.accentCream,
+                              fontFamily: 'PlayfairDisplay',
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Your AI will transform your room based on this style',
+                            style: TextStyle(
+                              color: AppTheme.textMuted,
+                              fontSize: 16,
+                              fontFamily: 'Inter',
+                              height: 1.5,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            height: 3,
+                            width: 80,
+                            decoration: BoxDecoration(
+                              gradient: AppTheme.primaryGradient,
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 32),
 
-          // Next Button (sticky at bottom)
-          Container(
-            padding: const EdgeInsets.all(24),
-            color: Colors.white,
-            child: SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: ElevatedButton(
-                onPressed: selectedStyle != null
-                    ? () {
-                        // Navigate to upload screen
-                        Navigator.pushNamed(
-                          context,
-                          '/upload',
-                          arguments: selectedStyle,
+                    // Grid of Style Cards
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 20,
+                        mainAxisSpacing: 20,
+                        childAspectRatio: 0.75,
+                      ),
+                      itemCount: styles.length,
+                      itemBuilder: (context, index) {
+                        final style = styles[index];
+                        return StyleCard(
+                          title: style['title']!,
+                          description: style['description']!,
+                          imageUrl: style['image']!,
+                          isSelected: selectedStyle == style['title'],
+                          onTap: () {
+                            ref.read(selectedStyleProvider.notifier).setStyle(
+                                style['title']);
+                          },
                         );
-                      }
-                    : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF333333),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 0,
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                  ],
                 ),
-                child: const Text(
-                  'Next →',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+              ),
+            ),
+
+            // Next Button (sticky at bottom)
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryDark,
+                border: Border(
+                  top: BorderSide(
+                    color: AppTheme.accentGold.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Container(
+                height: 60,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.accentGold.withOpacity(
+                        selectedStyle != null ? 0.4 : 0.2,
+                      ),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: ElevatedButton(
+                  onPressed: selectedStyle != null
+                      ? () {
+                          // Navigate to upload screen
+                          Navigator.pushNamed(
+                            context,
+                            '/upload',
+                            arguments: selectedStyle,
+                          );
+                        }
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: selectedStyle != null
+                        ? AppTheme.accentGold
+                        : AppTheme.secondaryDark,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Continue to Upload',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: 'Inter',
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Icon(
+                        Icons.arrow_forward_rounded,
+                        size: 20,
+                        color: selectedStyle != null
+                            ? Colors.white
+                            : AppTheme.textMuted,
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
