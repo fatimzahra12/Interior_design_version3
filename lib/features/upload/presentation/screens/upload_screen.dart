@@ -32,8 +32,8 @@ class _UploadScreenState extends ConsumerState<UploadScreen> {
 
   // API URL
   static const String baseUrl = kIsWeb
-      ? 'http://localhost:8001'
-      : 'http://192.168.1.167:8001'; // CHANGE THIS IP!
+      ? 'http://localhost:8000'
+      : 'http://192.168.1.167:8000'; // CHANGE THIS IP!
 
   Future<void> _pickImage(ImageSource source) async {
     try {
@@ -139,54 +139,118 @@ class _UploadScreenState extends ConsumerState<UploadScreen> {
     }
   }
 
+  // Future<void> _generateDesign() async {
+  //   final selectedStyle = ref.read(selectedStyleProvider);
+  //   if (_imageFile == null) {
+  //     _showWarningSnackBar('Please select an image first');
+  //     return;
+  //   }
+  //   if (selectedStyle == null) {
+  //     _showWarningSnackBar('Please select a style first');
+  //     return;
+  //   }
+
+  //   setState(() {
+  //     _isLoading = true;
+  //     _generatedDesign = null;
+  //   });
+
+  //   try {
+  //     var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/transform-room'));
+  //     request.fields['style'] = selectedStyle; // send style
+  //     if (kIsWeb && _webImage != null) {
+  //       request.files.add(
+  //         http.MultipartFile.fromBytes('file', _webImage!, filename: 'image.jpg'),
+  //       );
+  //     } else if (_imageFile != null) {
+  //       request.files.add(
+  //         await http.MultipartFile.fromPath('file', (_imageFile as File).path),
+  //       );
+  //     }
+
+  //     final streamedResponse = await request.send();
+  //     final response = await http.Response.fromStream(streamedResponse);
+
+  //     if (response.statusCode == 200) {
+  //       final result = json.decode(response.body);
+  //       final base64Image = result['generated_image'] as String;
+  //       setState(() {
+  //         _generatedDesign = base64Decode(base64Image);
+  //       });
+  //       _showSuccessSnackBar('Design generated successfully!');
+  //     } else {
+  //       throw Exception('API Error: ${response.statusCode}');
+  //     }
+  //   } catch (e) {
+  //     _showErrorSnackBar('Design generation error: ${e.toString()}');
+  //   } finally {
+  //     setState(() => _isLoading = false);
+  //   }
+  // }
+
   Future<void> _generateDesign() async {
-    final selectedStyle = ref.read(selectedStyleProvider);
-    if (_imageFile == null) {
-      _showWarningSnackBar('Please select an image first');
-      return;
-    }
-    if (selectedStyle == null) {
-      _showWarningSnackBar('Please select a style first');
-      return;
-    }
+  final selectedStyle = ref.read(selectedStyleProvider);
 
-    setState(() {
-      _isLoading = true;
-      _generatedDesign = null;
-    });
-
-    try {
-      var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/generate'));
-      request.fields['style'] = selectedStyle; // send style
-      if (kIsWeb && _webImage != null) {
-        request.files.add(
-          http.MultipartFile.fromBytes('file', _webImage!, filename: 'image.jpg'),
-        );
-      } else if (_imageFile != null) {
-        request.files.add(
-          await http.MultipartFile.fromPath('file', (_imageFile as File).path),
-        );
-      }
-
-      final streamedResponse = await request.send();
-      final response = await http.Response.fromStream(streamedResponse);
-
-      if (response.statusCode == 200) {
-        final result = json.decode(response.body);
-        final base64Image = result['generated_image'] as String;
-        setState(() {
-          _generatedDesign = base64Decode(base64Image);
-        });
-        _showSuccessSnackBar('Design generated successfully!');
-      } else {
-        throw Exception('API Error: ${response.statusCode}');
-      }
-    } catch (e) {
-      _showErrorSnackBar('Design generation error: ${e.toString()}');
-    } finally {
-      setState(() => _isLoading = false);
-    }
+  if (_imageFile == null || _roomType == null) {
+    _showWarningSnackBar('Please classify the room first');
+    return;
   }
+
+  if (selectedStyle == null) {
+    _showWarningSnackBar('Please select a style first');
+    return;
+  }
+
+  setState(() {
+    _isLoading = true;
+    _generatedDesign = null;
+  });
+
+  try {
+    final request = http.MultipartRequest(
+      'POST',
+      // Uri.parse('$baseUrl/transform-room'),
+      Uri.parse('https://affirmingly-bibliotic-yadiel.ngrok-free.dev/transform-room')
+    );
+
+    // REQUIRED fields for Colab API
+    request.fields['room_type'] = _roomType!;
+    request.fields['style'] = selectedStyle;
+
+    if (kIsWeb && _webImage != null) {
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'image',
+          _webImage!,
+          filename: 'room.jpg',
+        ),
+      );
+    } else {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'image',
+          (_imageFile as File).path,
+        ),
+      );
+    }
+
+    final streamedResponse = await request.send();
+
+    if (streamedResponse.statusCode == 200) {
+      final bytes = await streamedResponse.stream.toBytes();
+      setState(() {
+        _generatedDesign = bytes;
+      });
+      _showSuccessSnackBar('Design generated successfully!');
+    } else {
+      throw Exception('API Error: ${streamedResponse.statusCode}');
+    }
+  } catch (e) {
+    _showErrorSnackBar('Design generation error: $e');
+  } finally {
+    setState(() => _isLoading = false);
+  }
+}
 
   void _showErrorSnackBar(String message) {
     if (!mounted) return;
